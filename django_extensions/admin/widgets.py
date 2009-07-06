@@ -1,7 +1,7 @@
-from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.text import truncate_words
 from django.template.loader import render_to_string
@@ -48,8 +48,10 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
         if not attrs.has_key('class'):
             attrs['class'] = 'vForeignKeyRawIdAdminField'
         if value:
+            value = force_unicode(value)
             label = self.label_for_value(value)
         else:
+            value = u''
             label = u''
         context = {
             'url': url,
@@ -60,6 +62,7 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
             'model_name': model_name,
             'app_label': app_label,
             'label': label,
+            'value': value,
             'name': name,
             'safe_name': name.replace('-', '_'),
         }

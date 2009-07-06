@@ -3,7 +3,7 @@
 <a href="{{ related_url }}{{ url }}" class="related-lookup" id="lookup_id_{{ safe_name }}" onclick="return showRelatedObjectLookupPopup(this);">
   <img src="{{ admin_media_prefix }}img/admin/selector-search.gif" width="16" height="16" alt="{% trans "Lookup" %}" />
 </a>
-<input class="vForeignKeyRawIdAdminField" type="text" name="{{ safe_name }}" id="id_{{ safe_name }}" />
+<input class="vForeignKeyRawIdAdminField" type="text" name="{{ name }}" id="id_{{ safe_name }}" value="{{ value }}" />
 
 <script type="text/javascript">
 $(document).ready(function() {
