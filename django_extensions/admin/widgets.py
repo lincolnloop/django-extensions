@@ -13,7 +13,8 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
     A Widget for displaying ForeignKeys in an autocomplete search input
     instead in a <select> box.
     """
-    search_path = '../foreignkey_autocomplete/'
+    # if this is set, the if None test below doesn't trigger to use reverse()
+    #search_path = '../foreignkey_autocomplete/'
 
     def __init__(self, rel, search_fields, attrs=None):
         ForeignKeyRawIdWidget.__init__(self, rel, attrs)
