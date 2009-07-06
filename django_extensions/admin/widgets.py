@@ -46,8 +46,6 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
             url = ''
         if not attrs.has_key('class'):
             attrs['class'] = 'vForeignKeyRawIdAdminField'
-        # Call the TextInput render method directly to have more control
-        output = [forms.TextInput.render(self, name, value, attrs)]
         if value:
             label = self.label_for_value(value)
         else:
@@ -64,10 +62,9 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
             'name': name,
             'safe_name': name.replace('-', '_'),
         }
-        output.append(render_to_string(self.widget_template or (
+        output = render_to_string(self.widget_template or (
             'django_extensions/admin/widgets/%s/%s/foreignkey_searchinput.html' % (app_label, model_name),
             'django_extensions/admin/widgets/%s/foreignkey_searchinput.html' % app_label,
             'django_extensions/admin/widgets/foreignkey_searchinput.html',
-        ), context))
-        output.reverse()
+        ), context)
         return mark_safe(u''.join(output))
