@@ -62,6 +62,7 @@ class AdminForeignKeySearchInput(ForeignKeySearchInput, ForeignKeyRawIdWidget):
             'app_label': app_label,
             'label': label,
             'name': name,
+            'safe_name': name.replace('-', '_'),
         }
         output.append(render_to_string(self.widget_template or (
             'django_extensions/admin/widgets/%s/%s/foreignkey_searchinput.html' % (app_label, model_name),

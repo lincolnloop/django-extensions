@@ -1,15 +1,15 @@
 {% load i18n %}
-<input type="text" id="lookup_{{ name }}" value="{{ label }}" style="display:none;" />
-<a href="{{ related_url }}{{ url }}" class="related-lookup" id="lookup_id_{{ name }}" onclick="return showRelatedObjectLookupPopup(this);">
+<input type="text" id="lookup_{{ safe_name }}" value="{{ label }}" style="display:none;" />
+<a href="{{ related_url }}{{ url }}" class="related-lookup" id="lookup_id_{{ safe_name }}" onclick="return showRelatedObjectLookupPopup(this);">
   <img src="{{ admin_media_prefix }}img/admin/selector-search.gif" width="16" height="16" alt="{% trans "Lookup" %}" />
 </a>
 <script type="text/javascript">
 $(document).ready(function() {
     // Show lookup input
-    $("#lookup_{{ name }}").show();
+    $("#lookup_{{ safe_name }}").show();
     function reset() {
-        $('#id_{{ name }}').val('');
-        $('#lookup_{{ name }}').val('');
+        $('#id_{{ safe_name }}').val('');
+        $('#lookup_{{ safe_name }}').val('');
     };
     function lookup(query) {
         $.get('{{ search_path }}', {
@@ -18,11 +18,11 @@ $(document).ready(function() {
             'model_name': '{{ model_name }}',
             'object_pk': query,
         }, function(data){
-            $('#lookup_{{ name }}').val(data);
-            {{ name }}_value = query;
+            $('#lookup_{{ safe_name }}').val(data);
+            {{ safe_name }}_value = query;
         });
     };
-    $('#id_{{ name }}').keyup(
+    $('#id_{{ safe_name }}').keyup(
         function(event) {
             if ($(this).val()) {
                 if (event.keyCode == 27) {
@@ -41,7 +41,7 @@ $(document).ready(function() {
             }
         }
     );
-    $('#lookup_{{ name }}').autocomplete(
+    $('#lookup_{{ safe_name }}').autocomplete(
         '{{ search_path }}', {
             extraParams: {
                 'search_fields': '{{ search_fields }}',
@@ -52,7 +52,7 @@ $(document).ready(function() {
     ).result(
         function(event, data, formatted) {
             if (data) {
-                $('#id_{{ name }}').val(data[1]);
+                $('#id_{{ safe_name }}').val(data[1]);
             }
         }
     ).keyup(
@@ -62,12 +62,12 @@ $(document).ready(function() {
             }
         }
     );
-    var {{ name }}_value = $('#id_{{ name }}').val();
+    var {{ safe_name }}_value = $('#id_{{ safe_name }}').val();
     function check() {
-        {{ name }}_check = $('#id_{{ name }}').val();
-        if ({{ name }}_check) {
-            if ({{ name }}_check != {{ name }}_value) {
-                lookup({{ name }}_check);
+        {{ safe_name }}_check = $('#id_{{ safe_name }}').val();
+        if ({{ safe_name }}_check) {
+            if ({{ safe_name }}_check != {{ safe_name }}_value) {
+                lookup({{ safe_name }}_check);
             }
         }
     }
