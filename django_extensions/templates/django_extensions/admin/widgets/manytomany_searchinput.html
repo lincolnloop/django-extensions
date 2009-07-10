@@ -1,0 +1,109 @@
+{% load i18n %}
+<input type="text" id="lookup_{{ safe_name }}" value="{{ label }}" style="display:none;" />
+<a href="{{ related_url }}{{ url }}" class="related-lookup" id="lookup_id_{{ safe_name }}" onclick="return showRelatedObjectLookupPopup(this);">
+  <img src="{{ admin_media_prefix }}img/admin/selector-search.gif" width="16" height="16" alt="{% trans "Lookup" %}" />
+</a>
+<input class="vForeignKeyRawIdAdminField" type="text" name="{{ name }}" id="id_{{ safe_name }}" value="{{ value }}" />
+<ul id="display_list_{{ safe_name }}" class="display_list">
+{% for item in display_list %}
+    <li class="display_list_item" id="display_list_item_{{ item.id }}">{{ item }}<span class="close"></span></li>
+{% endfor %}
+</ul>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#lookup_{{ safe_name }}").show();
+    function reset() {
+        $('#lookup_{{ safe_name }}').val('');
+    };
+    function append_display_list_item(pk, value) {
+        $('#display_list_{{ safe_name }}').append(
+             '<li class="display_list_item" id="display_list_item_' + pk + '">' + 
+             value + '<span class="close"></span>' + 
+             '</li>'
+         );
+    };
+    function lookup(query) {
+        console.log('lookup with query ' + query);
+        $.get('{{ search_path }}', {
+            'search_fields': '{{ search_fields }}',
+            'app_label': '{{ app_label }}',
+            'model_name': '{{ model_name }}',
+            'object_pk': query,
+        }, function(data) {
+            var rows = data.split('\n');
+            $('#display_list_{{ safe_name }}').empty();
+            $.each(rows, function(i, val) {
+                if (val) {
+                    var cols = val.split('|');
+                    append_display_list_item(cols[1], cols[0]);
+                }
+            })
+        });
+    };
+    $('#id_{{ safe_name }}').keyup(
+        function(event) {
+            console.log('key up event');
+            if ($(this).val()) {
+                console.log($(this).val());
+                console.log('event key code: ' + event.keyCode);
+                if (event.keyCode == 27) {
+                    console.log('esc pressed');
+                    reset();
+                } else {
+                    console.log('other key pressed');
+                    if ($(this).val().charAt($(this).val().length-1) != ',') {
+                        console.log('last char not a comma');
+                        lookup($(this).val());
+                    }
+                };
+            } else {
+                console.log('no val, reset');
+                reset();
+            };
+        }
+    ).blur(
+        function(event){
+            console.log('blur event');
+            if (!$(this).val()) {
+                console.log('empty val, reset');
+                reset();
+            }
+        }
+    );
+    $('#lookup_{{ safe_name }}').autocomplete(
+        '{{ search_path }}', {
+            extraParams: {
+                'search_fields': '{{ search_fields }}',
+                'app_label': '{{ app_label }}',
+                'model_name': '{{ model_name }}',
+            }
+        }
+    ).result(
+        function(event, data, formatted) {
+            if (data) {
+                var cur = $('#id_{{ safe_name }}').val();
+                $('#id_{{ safe_name }}').val(
+                    (cur && cur + ',') + data[1]
+                );
+                append_display_list_item(data[1], data[0]);
+            }
+        }
+    ).keyup(
+        function(event) {
+            if ((event.keyCode==27)|(!$(this).val())) {
+                reset();
+            }
+        }
+    );
+    var {{ safe_name }}_value = $('#id_{{ safe_name }}').val();
+    function check() {
+        {{ safe_name }}_check = $('#id_{{ safe_name }}').val();
+        if ({{ safe_name }}_check) {
+            if ({{ safe_name }}_check != {{ safe_name }}_value) {
+                lookup({{ safe_name }}_check);
+            }
+        }
+    }
+    //timeout = window.setInterval(check, 300);
+});
+</script>
